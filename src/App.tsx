@@ -10,6 +10,7 @@ export default function App() {
     <Container fluid>
       <Space h="md" />
       <Home />
+      <Space h="xl" />
     </Container>
   );
 }

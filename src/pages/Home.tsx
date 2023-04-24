@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Input, Button, Space, Grid } from "@mantine/core";
+import { Input, Button, Space, Grid, Skeleton } from "@mantine/core";
 import { IconDeviceSpeaker } from "@tabler/icons-react";
 import { deezerRequestOptions } from "../helpers/requestOptions";
 
@@ -8,30 +8,50 @@ export default function Home() {
   const [query, setQuery] = useState("");
   const [tracks, setTracks] = useState<any[]>([]);
   const [audioSRC, setAudioSRC] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [clicked, setClicked] = useState(false);
 
   useEffect(() => {
     requestMusic();
+    const handleFirstClick = () => {
+      setClicked(true);
+      console.log("click");
+      window.removeEventListener("click", handleFirstClick);
+    };
+
+    window.addEventListener("click", handleFirstClick);
+    return () => {
+      window.removeEventListener("click", handleFirstClick);
+    };
   }, []);
 
   function requestMusic(q: string = "eminem") {
+    setLoading(true);
     setAudioSRC("");
-    async function getMusic(q: string = "eminem") {
+    setTracks([]);
+    let index: number = 0;
+    async function getMusic() {
       try {
-        const response = await axios.request({ ...deezerRequestOptions, params: { q } });
+        const response = await axios.request({ ...deezerRequestOptions, params: { q, index } });
         if (response.data.error) throw new Error();
-        setTracks(response.data.data);
-        console.log(response.data);
+        setTracks((prev) => [...prev, ...response.data.data]);
+        if (response.data.next) {
+          index += 25;
+          getMusic();
+        } else {
+          setLoading(false);
+        }
       } catch (error) {
-        getMusic(q);
+        getMusic();
       }
     }
-    getMusic(q);
+    getMusic();
   }
 
   return (
     <div>
       <Grid>
-        <Grid.Col span={11}>
+        <Grid.Col span="auto">
           <Input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -40,15 +60,20 @@ export default function Home() {
             size="md"
           />
         </Grid.Col>
-        <Grid.Col span={1}>
-          <Button fullWidth onClick={() => requestMusic(query)} disabled={!query} size="md">
+        <Grid.Col span="content">
+          <Button onClick={() => requestMusic(query)} disabled={!query} size="md">
             Найти
           </Button>
         </Grid.Col>
       </Grid>
-
+      {!clicked && (
+        <p>
+          Пожалуйста, кликните в любом месте, из за autoplay policy браузер не будет проигрывать музыку, пока вы не
+          кликните :)
+        </p>
+      )}
       <Space h="md" />
-      <audio style={{ display: "none" }} controls autoPlay src={audioSRC} />
+      <audio style={{ display: "none" }} autoPlay loop src={audioSRC} />
       <div className="tracks">
         {tracks.map((e) => (
           <div
@@ -69,6 +94,8 @@ export default function Home() {
             </div>
           </div>
         ))}
+        {loading &&
+          new Array(50).fill(1).map((e, i) => <Skeleton key={i} style={{ margin: "2px" }} className="track" />)}
       </div>
     </div>
   );
