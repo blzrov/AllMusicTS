@@ -1,0 +1,21 @@
+.tracks {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.track {
+  width: 100px;
+  height: 100px;
+  text-align: center;
+  color: white;
+  font-weight: 600;
+  background-color: aquamarine;
+  flex-grow: 1;
+  cursor: pointer;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.track_artistName:hover {
+  color: blue;
+}
