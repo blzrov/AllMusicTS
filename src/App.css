@@ -6,11 +6,11 @@
 .track {
   width: 100px;
   height: 100px;
+  flex-grow: 1;
   text-align: center;
   color: white;
   font-weight: 600;
   background-color: #dee2e6;
-  flex-grow: 1;
   cursor: pointer;
   background-repeat: no-repeat;
   background-size: cover;
@@ -18,8 +18,8 @@
 }
 
 .track:hover {
-  transform: scale(1.25);
   z-index: 2;
+  transform: scale(1.25);
 }
 
 .track_artistName:hover {

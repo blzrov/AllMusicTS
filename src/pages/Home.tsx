@@ -1,15 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Input, Button, Space, Grid, Skeleton } from "@mantine/core";
+import { Input, Button, Space, Grid } from "@mantine/core";
 import { IconDeviceSpeaker } from "@tabler/icons-react";
 import { deezerRequestOptions } from "../helpers/requestOptions";
+import TrackList from "../components/TrackList";
+import { ITrack } from "../types/types";
 
 export default function Home() {
-  const [query, setQuery] = useState("");
-  const [tracks, setTracks] = useState<any[]>([]);
-  const [audioSRC, setAudioSRC] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [clicked, setClicked] = useState(false);
+  const [query, setQuery] = useState<string>("");
+  const [tracks, setTracks] = useState<ITrack[]>([]);
+  const [audioSRC, setAudioSRC] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(true);
+  const [clicked, setClicked] = useState<boolean>(false);
 
   useEffect(() => {
     requestMusic();
@@ -54,7 +56,7 @@ export default function Home() {
         <Grid.Col span="auto">
           <Input
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setQuery(e.target.value)}
             icon={<IconDeviceSpeaker />}
             placeholder="eminem"
             size="md"
@@ -74,29 +76,13 @@ export default function Home() {
       )}
       <Space h="md" />
       <audio style={{ display: "none" }} autoPlay loop src={audioSRC} />
-      <div className="tracks">
-        {tracks.map((e) => (
-          <div
-            key={e.id}
-            className="track"
-            style={{ backgroundImage: `url("${e.album.cover_xl}")` }}
-            onMouseEnter={() => setAudioSRC(e.preview)}
-            onMouseLeave={() => setAudioSRC("")}
-          >
-            <div
-              className="track_artistName"
-              onClick={() => {
-                setQuery(e.artist.name);
-                requestMusic(e.artist.name);
-              }}
-            >
-              {e.artist.name}
-            </div>
-          </div>
-        ))}
-        {loading &&
-          new Array(50).fill(1).map((e, i) => <Skeleton key={i} style={{ margin: "2px" }} className="track" />)}
-      </div>
+      <TrackList
+        tracks={tracks}
+        setAudioSRC={setAudioSRC}
+        setQuery={setQuery}
+        requestMusic={requestMusic}
+        loading={loading}
+      />
     </div>
   );
 }
