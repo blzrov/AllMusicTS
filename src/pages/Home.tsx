@@ -17,7 +17,6 @@ export default function Home() {
     requestMusic();
     const handleFirstClick = () => {
       setClicked(true);
-      console.log("click");
       window.removeEventListener("click", handleFirstClick);
     };
 

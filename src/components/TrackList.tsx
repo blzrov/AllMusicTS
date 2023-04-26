@@ -3,10 +3,10 @@ import { ITrack } from "../types/types";
 
 interface TrackListProps {
   tracks: ITrack[];
-  setAudioSRC: Function;
-  setQuery: Function;
-  requestMusic: Function;
-  loading: Boolean;
+  loading: boolean;
+  setAudioSRC: (arg0: string) => void;
+  setQuery: (arg0: string) => void;
+  requestMusic: (q: string) => void;
 }
 
 export default function TrackList({ tracks, setAudioSRC, setQuery, requestMusic, loading }: TrackListProps) {
